@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}List view{% endblock title %}
+
+{% block content %}
+       <div class="row mb-4">                                                            
+         <div class="col-md-8">                                                         
+             <h1 class="mb-4">{{ item.project_name }}</h1>                              
+                                                                                        
+             <!-- Author Info -->                                                       
+             <div class="d-flex align-items-center mb-4">                               
+                 <div class="flex-grow-1">                                              
+                     <h5 class="mb-0">By {{ request.user.username }}</h5>            
+                     <p class="text-muted small">A short bio or description of the author would go here.</p>                                                              
+                 </div>                                                                 
+             </div>                                                                     
+                                                                                        
+             <!-- Project Image -->                                                     
+             {% if item.project_image %}                                                
+                 <img src="{{ item.project_image.url }}" class="img-fluid rounded mb-4" alt="{{ item.project_name }}">                                                   
+             {% endif %}                                                                
+                                                                                    
+             <!-- Project Description -->                                               
+             <div class="card mb-4">                                                    
+                 <div class="card-body">                                                
+                     <h5 class="card-title">Project Description</h5>                    
+                     <p class="card-text">{{ item.project_description }}</p>            
+                     {% if item.project_link %}                                         
+                         <a href="{{ item.project_link }}" class="btn btn-primary" target="_blank">View Project</a>                                                       
+                     {% endif %}                                                        
+                 </div>                                                                 
+             </div>                                                                     
+         </div>                                                                         
+         <div class="col-md-4">                                                         
+             <!-- Author Image -->                                                      
+             <div class="card">                                                         
+                 <div class="card-body text-center">                                    
+                     <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Author Image">                                                              
+                     <h5 class="card-title">{{ item.created_by.username }}</h5>         
+                     <p class="card-text text-muted">{{request.user.username}}</p>                         
+                 </div>                                                                 
+             </div>                                                                     
+         </div>                                                                         
+     </div>                                                                             
+                                                                                        
+     <!-- Other Projects by Author Section -->                                          
+     <div class="mb-4">                                                                 
+         <h3>More Projects by {{ request.user.username }}</h3>                       
+         <hr>                                                                           
+         <div class="row">                                                              
+             {% for project in item.created_by.projects.all %}                          
+                 {% if project.id != item.id %}                                         
+                     <div class="col-md-4 mb-3">                                        
+                         <div class="card h-100">                                       
+                             {% if project.project_image %}                             
+                                 <img src="{{ project.project_image.url }}" class="card-img-top" alt="{{ project.project_name }}">                                 
+                             {% endif %}                                                
+                             <div class="card-body">                                    
+                                 <h5 class="card-title">{{ project.project_name }}</h5>                                                                                
+                                 <p class="card-text">{{ project.project_description|truncatewords:20 }}</p>                                    
+                                 <a href="{% url 'list_item' project.id %}" class="btn btn-secondary">View Details</a>                                                        
+                             </div>                                                     
+                         </div>                                                         
+                     </div>                                                             
+                 {% endif %}                                                            
+             {% endfor %}                                                               
+         </div>                                                                         
+     </div>                                                                             
+                                                                                        
+     <!-- About the Author Section -->                                                  
+     <div class="mb-4">                                                                 
+         <h3>About {{ item.created_by.username }}</h3>                                  
+         <hr>                                                                           
+         <p>This is where a more detailed 'About Me' section for the author would be displayed. It could include their skills, experience, and interests.</p>               
+     </div>                                                                             
+                                                                                        
+     <!-- Contact Section -->                                                           
+     <div>                                                                              
+         <h3>Contact</h3>                                                               
+         <hr>                                                                           
+         <p>This section would contain the author's contact details.</p>                
+         <p><strong>Email:</strong> {{ item.created_by.email|default:"Not provided" }}</p>                                                                                 
+     </div>                                                                             
+ </div>         
+
+
+{% endblock content %}

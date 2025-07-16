@@ -1,0 +1,16 @@
+<!-- filepath: c:\Users\admin\OneDrive\Desktop\Django Port\mysite\myapp\templates\project_edit.html -->
+{% extends "layout.html" %}
+
+{% block title %}Edit Project{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Project</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Project{% endblock title %}
+
+{% block content %}
+
+<div class="conteiner">
+    <div class="form-control" style="width: 50%; text-align: center; margin: auto">
+     <h1>Create a New Project</h1>
+    {% if form.errors %}
+        <div style="color: red;">
+            <h2>Please correct the errors below:</h2>
+            {{ form.non_field_errors }}
+            <ul>
+                {% for field in form %}
+                    {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <div class="sectionForm" style="text-align: left;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Project</button>
+    </form>
+    </div>
+    </div>
+</div>
+{% endblock content %}
+    

@@ -1,0 +1,63 @@
+/* static/css/style.css */
+
+/* General Logo Styling (adjust as needed) */
+.site-logo {
+    height: 40px; /* Adjust height as per your design */
+    width: auto;
+}
+
+/* --- Option A: Two distinct images --- */
+body.dark-mode #logo-day {
+    display: none;
+}
+body.dark-mode #logo-night {
+    display: inline-block; /* Show the night logo */
+}
+
+/* Ensure the day logo is visible by default (light mode) */
+#logo-day {
+    display: inline-block;
+}
+#logo-night {
+    display: none;
+}
+
+
+/* --- Option B: Single image with CSS filter --- */
+/* This assumes your base logo is suitable for light mode */
+body.dark-mode #site-logo {
+    filter: invert(1) hue-rotate(180deg); /* Example: Inverts colors for dark mode */
+    /* You might need to fine-tune this depending on your logo's colors */
+    /* Or just a simple filter: brightness(0.7); or invert(0.8); */
+}
+
+
+/* Optional: Style for the theme toggle icon */
+#theme-toggle .bi-sun-fill {
+    display: none; /* Hide sun icon by default */
+}
+#theme-toggle .bi-moon-stars-fill {
+    display: inline-block; /* Show moon icon by default */
+}
+
+body.dark-mode #theme-toggle .bi-sun-fill {
+    display: inline-block; /* Show sun icon in dark mode */
+}
+body.dark-mode #theme-toggle .bi-moon-stars-fill {
+    display: none; /* Hide moon icon in dark mode */
+}
+
+/* Optional: Basic dark mode body styling */
+body.dark-mode {
+    background-color: #343a40; /* Dark background */
+    color: #f8f9fa; /* Light text */
+}
+
+/* Example for dark mode navbar */
+body.dark-mode .navbar {
+    background-color: #212529 !important; /* Darker navbar */
+}
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link {
+    color: #f8f9fa !important;
+}

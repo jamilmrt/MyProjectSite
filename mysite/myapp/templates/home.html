@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My site Home page 
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="hero-section">
+            <h6>Welcome to Mysite --> {{request.user.username}}</h6>
+            <a href="{% url 'create_project' %}" class="btn btn-primary">Create Project</a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4"> {# g-4 adds gutter/spacing between columns #}
+            {% for project in projects %}
+            <div class="col " >
+                <div class="card">
+                    {% if project.project_image %}
+                    <img src="{{project.project_image.url }}" class="card-img-top" alt="image">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image Available" class="card-image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{project.project_name}}</h5>
+                        <p class="card-text">{{project.project_description|truncatechars:50}}</p>
+                        <p class="text-warning small fst-italic">
+                            [DEBUG] Logged-in user: {{ request.user }} (ID: {{ request.user.id }})
+                            | Project owner: {{ project.user }} (ID: {{ project.user.id }})
+                        </p>
+                        {% if project.user == request.user %}
+                        <a href="{% url 'project_edit' project.id %}" class="btn btn-success">Edit</a>
+                        <a href="{% url 'project_delete' project.id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                        <a href="{% url 'list_item' project.id %}" class="btn btn-primary">More..</a>
+
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+        <div class="col-12">
+            <p>No Projects Found</p>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+{% endblock content %}
