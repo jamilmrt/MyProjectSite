@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
+
+
 
 
 # Create your models here.
@@ -9,7 +12,7 @@ class Project(models.Model):
     project_description = models.TextField()
     project_image = models.ImageField(upload_to='project_images/')
     project_link = models.URLField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
