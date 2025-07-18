@@ -5,60 +5,66 @@
 {% block content %}
        <div class="row mb-4">                                                            
          <div class="col-md-8">                                                         
-             <h1 class="mb-4">{{ item.project_name }}</h1>                              
+             <h1 class="mb-4">{{ project.project_name }}</h1>                              
                                                                                         
              <!-- Author Info -->                                                       
              <div class="d-flex align-items-center mb-4">                               
-                 <div class="flex-grow-1">                                              
-                     <h5 class="mb-0">By {{ request.user.username }}</h5>            
-                     <p class="text-muted small">A short bio or description of the author would go here.</p>                                                              
+                 <div class="flex-grow-1">                           ided a bio ye                   
+                     <h5 class="mb-1"> By {{ project.user.username }}</h5>            
+                     {% if project.user.person %}
+                     <p class="text-muted small">{{ project.user.person.person_bio|default:"The author has not provided a bio yet." }}</p>
+                     {% endif %}
                  </div>                                                                 
              </div>                                                                     
                                                                                         
              <!-- Project Image -->                                                     
-             {% if item.project_image %}                                                
-                 <img src="{{ item.project_image.url }}" class="img-fluid rounded mb-4" alt="{{ item.project_name }}">                                                   
+             {% if project.project_image %}                                                
+                 <img src="{{ project.project_image.url }}" class="img-fluid rounded mb-4" alt="{{ project.project_name }}">                                                   
              {% endif %}                                                                
                                                                                     
              <!-- Project Description -->                                               
              <div class="card mb-4">                                                    
                  <div class="card-body">                                                
                      <h5 class="card-title">Project Description</h5>                    
-                     <p class="card-text">{{ item.project_description }}</p>            
-                     {% if item.project_link %}                                         
-                         <a href="{{ item.project_link }}" class="btn btn-primary" target="_blank">View Project</a>                                                       
+                     <p class="card-text">{{ project.project_description }}</p>            
+                     {% if project.project_link %}                                         
+                         <a href="{{ project.project_link }}" class="btn btn-primary" target="_blank">View Project</a>                                                       
                      {% endif %}                                                        
                  </div>                                                                 
              </div>                                                                     
          </div>                                                                         
          <div class="col-md-4">                                                         
              <!-- Author Image -->                                                      
+             {% if project.user.person and project.user.person.person_image %}
              <div class="card">                                                         
                  <div class="card-body text-center">                                    
-                     <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Author Image">                                                              
-                     <h5 class="card-title">{{ item.created_by.username }}</h5>         
-                     <p class="card-text text-muted">{{request.user.username}}</p>                         
+                     <img src="{{ project.user.person.person_image.url }}" class="rounded-circle mb-3" alt="Author Image">                                                              
+                     <h5 class="card-title">{{ project.user.username }}</h5>         
+                     <p class="card-text text-muted">{{ project.user.person.person_name }}</p>                         
                  </div>                                                                 
              </div>                                                                     
+             {% endif %}
          </div>                                                                         
      </div>                                                                             
                                                                                         
      <!-- Other Projects by Author Section -->                                          
+     {% if request.user.is_authenticated and request.user.projects.count > 1 %}
      <div class="mb-4">                                                                 
-         <h3>More Projects by {{ request.user.username }}</h3>                       
+         <h3>Your Other Projects</h3>
          <hr>                                                                           
          <div class="row">                                                              
-             {% for project in item.created_by.projects.all %}                          
-                 {% if project.id != item.id %}                                         
+             {% for user_project in request.user.projects.all %}
+                 {# Don't show the current project in this list #}
+                 {% if user_project.id != project.id %}
                      <div class="col-md-4 mb-3">                                        
                          <div class="card h-100">                                       
-                             {% if project.project_image %}                             
-                                 <img src="{{ project.project_image.url }}" class="card-img-top" alt="{{ project.project_name }}">                                 
+                             {% if user_project.project_image %}
+                                 <img src="{{ user_project.project_image.url }}" class="card-img-top" alt="{{ user_project.project_name }}">
                              {% endif %}                                                
                              <div class="card-body">                                    
-                                 <h5 class="card-title">{{ project.project_name }}</h5>                                                                                
-                                 <p class="card-text">{{ project.project_description|truncatewords:20 }}</p>                                    
-                                 <a href="{% url 'list_item' project.id %}" class="btn btn-secondary">View Details</a>                                                        
+                                 <h5 class="card-title">{{ user_project.project_name }}</h5>
+                                 <p class="card-text">{{ user_project.project_description|truncatewords:20 }}</p>
+                                 <a href="{% url 'list_item' user_project.id %}" class="btn btn-secondary">View Details</a>
                              </div>                                                     
                          </div>                                                         
                      </div>                                                             
@@ -66,21 +72,29 @@
              {% endfor %}                                                               
          </div>                                                                         
      </div>                                                                             
+     {% endif %}
                                                                                         
      <!-- About the Author Section -->                                                  
+     {% if project.user.person %}
      <div class="mb-4">                                                                 
-         <h3>About {{ item.created_by.username }}</h3>                                  
+         <h3>About {{ project.user.person.person_name }}</h3>                                  
          <hr>                                                                           
-         <p>This is where a more detailed 'About Me' section for the author would be displayed. It could include their skills, experience, and interests.</p>               
+         <p>{{ project.user.person.person_bio }}</p>               
      </div>                                                                             
+     {% endif %}
                                                                                         
      <!-- Contact Section -->                                                           
+     {% if project.user.person %}
      <div>                                                                              
          <h3>Contact</h3>                                                               
          <hr>                                                                           
-         <p>This section would contain the author's contact details.</p>                
-         <p><strong>Email:</strong> {{ item.created_by.email|default:"Not provided" }}</p>                                                                                 
+         <p><strong>Email:</strong> {{ project.user.person.person_email|default:project.user.email|default:"Not provided" }}</p>
+         {% if project.user.person.person_phone %}<p><strong>Phone:</strong> {{ project.user.person.person_phone }}</p>{% endif %}
+         {% if project.user.person.person_website %}<p><strong>Website:</strong> <a href="{{ project.user.person.person_website }}">{{ project.user.person.person_website }}</a></p>{% endif %}
+         {% if project.user.person.person_github %}<p><strong>GitHub:</strong> <a href="{{ project.user.person.person_github }}">{{ project.user.person.person_github }}</a></p>{% endif %}
+         {% if project.user.person.person_linkedin %}<p><strong>LinkedIn:</strong> <a href="{{ project.user.person.person_linkedin }}">{{ project.user.person.person_linkedin }}</a></p>{% endif %}
      </div>                                                                             
+     {% endif %}
  </div>         
 
 

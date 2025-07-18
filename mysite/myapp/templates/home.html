@@ -25,12 +25,12 @@
                         <p class="text-warning small fst-italic">
                             [DEBUG] Logged-in user: {{ request.user }} (ID: {{ request.user.id }})
                             | Project owner: {{ project.user }} (ID: {{ project.user.id }})
-                        </p>
-                        <a href="{% url 'list_item' project.id %}" class="btn btn-primary">More..</a>
-                        {% if project.user == request.user %}
-                            <a href="{% url 'project_edit' project.id %}" class="btn btn-success">Edit</a>
-                            <a href="{% url 'project_delete' project.id %}" class="btn btn-danger">Delete</a>
+                        </p> 
+                        {% if user.is_authenticated and project.user == user %}
+                        <a href="{% url 'project_edit' project.id %}" class="btn btn-success">Edit</a>
+                        <a href="{% url 'project_delete' project.id %}" class="btn btn-danger">Delete</a>
                         {% endif %}
+                        <a href="{% url 'list_item' project.id %}" class="btn btn-primary">More..</a>
 
                     </div>
                 </div>

@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, LoginForm, ProjectForm
-from .models import Project
+from .forms import RegistrationForm, LoginForm, ProjectForm, PersonForm
+from .models import Project, Person
 
 
 
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
-    projects = Project.objects.filter(user =request.user).all().order_by('-created_at')
+    projects = Project.objects.order_by('-created_at')
     context = {'projects': projects}
     
     return render(request, 'home.html', context)
@@ -42,8 +42,6 @@ def register_view(request):
         form = RegistrationForm()
     return render(request, 'accounts/register.html', {'form': form})
     
-
-
 def logout_view(request):
     logout(request)
     return redirect('login')
@@ -64,7 +62,9 @@ def createProjectView(request):
 
 def listItem(request, pk):
     project = get_object_or_404(Project, pk=pk)
-    return render(request, 'list_item.html', {'project': project})
+    person = Person.objects.filter(user=request.user).first()
+    context = {'project': project, 'person': person}
+    return render(request, 'list_item.html', context)
 
 @login_required
 def project_edit(request, project_id):
@@ -88,3 +88,23 @@ def project_delete(request, project_id):
         item.delete()
         return redirect('home')
     return render(request, 'project_delete.html', {'item': item})
+
+
+@login_required(login_url='login')
+def manage_profile(request):
+    # Try to get the existing profile, or create a new one if it doesn't exist
+    try:
+        person = request.user.person
+    except Person.DoesNotExist:
+        person = Person(user=request.user)
+
+    if request.method == 'POST':
+        form = PersonForm(request.POST, request.FILES, instance=person)
+        if form.is_valid():
+            # The user is already associated with the person instance
+            form.save()
+            return redirect('home')
+    else:
+        form = PersonForm(instance=person)
+
+    return render(request, 'person_form.html', {'form': form})

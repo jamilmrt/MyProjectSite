@@ -1,13 +1,22 @@
 {% extends "layout.html" %}
 
-{% block title %}Create Project{% endblock title %}
+{% block title %}
+    {% if form.instance.pk %}
+        Update Profile
+    {% else %}
+        Create Profile
+    {% endif %}
+{% endblock title %}
 
 {% block content %}
 
 <div class="conteiner">
     <div class="form-control" style="width: 50%; text-align: center; margin: auto">
-     <h1>Create a New Project</h1>
-     <h1>Hello! Mr/Mrs <span>{{ request.user.username }}</span> Welcome </h1>
+    {% if form.instance.pk %}
+        <h1>Update Your Profile</h1>
+    {% else %}
+        <h1>Create Your Profile</h1>
+    {% endif %}
     {% if form.errors %}
         <div style="color: red;">
             <h2>Please correct the errors below:</h2>
@@ -23,11 +32,17 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-            
-        <button type="submit">Create Project</button>
+
+        <button type="submit">
+            {% if form.instance.pk %}
+                Update Profile
+            {% else %}
+                Create Profile
+            {% endif %}
+        </button>
     </form>
     </div>
     </div>
 </div>
 {% endblock content %}
-    
+
